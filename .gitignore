@@ -1,0 +1,42 @@
+# Ignore Android Studio/IntelliJ IDE files
+*.iml
+.idea/
+.idea/**/*
+*.DS_Store
+
+# Ignore Gradle and Build Files
+.gradle/
+local.properties
+/.gradle
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Ignore Generated Files
+/build/
+/captures/
+/externalNativeBuild/
+/cxx/
+
+# Ignore Keystore Files (Sensitive!)
+*.keystore
+*.jks
+
+# Ignore Crash Reports & Logs
+crashlytics/
+fastlane/
+*.log
+
+# Ignore Node.js Dependencies (If using React Native or Hybrid Modules)
+node_modules/
+
+# Ignore Firebase Configuration (Security Risk!)
+/app/google-services.json
+/app/google-services.xml
+
+# Ignore Environment Variables (If using dotenv for secrets)
+/.env
+/.env.local

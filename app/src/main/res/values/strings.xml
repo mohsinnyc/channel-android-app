@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Channel</string>
+
+    <!-- Authentication Screens -->
+    <!-- Sign-Up Screen Strings -->
+    <string name="auth_signup_title">Sign Up</string>
+    <string name="auth_username_label">Username</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_confirm_password_label">Confirm Password</string>
+    <string name="auth_signup_button">Sign Up</string>
+    <string name="auth_already_have_account">Already have an account? Login</string>
+
+    <!-- Login Screen -->
+    <string name="auth_login_title">Login</string>
+    <string name="auth_login_button">Log In</string>
+    <string name="auth_no_account">Don’t have an account? Sign up</string>
+</resources>
