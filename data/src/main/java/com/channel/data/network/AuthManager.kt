@@ -1,10 +1,10 @@
-package com.channel.data.auth
+package com.channel.data.network
 
-import com.channel.data.models.auth.AuthResponse
-import com.channel.data.models.auth.LoginRequest
-import com.channel.data.models.auth.SignUpRequest
-import com.channel.data.models.auth.RefreshTokenRequest
-import com.channel.data.network.AuthService
+import com.channel.data.model.auth.AuthResponse
+import com.channel.data.model.auth.LoginRequest
+import com.channel.data.model.auth.SignUpRequest
+import com.channel.data.model.auth.RefreshTokenRequest
+import com.channel.data.service.AuthService
 import com.channel.data.session.AuthStateManager
 import com.channel.data.storage.TokenManager
 import com.channel.data.utils.NetworkResult
@@ -22,11 +22,6 @@ class AuthManager @Inject constructor(
     retrofit: Retrofit
 ) {
     private val authService: AuthService = retrofit.create(AuthService::class.java)
-
-    fun mockLogin(mockResponse: AuthResponse) {
-        saveAuthTokens(mockResponse) // ✅ Store mock tokens
-        authStateManager.setAuthenticated() // ✅ Simulate successful login
-    }
 
     suspend fun login(username: String, password: String): NetworkResult<AuthResponse> {
         return withContext(Dispatchers.IO) {

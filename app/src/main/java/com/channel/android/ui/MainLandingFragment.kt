@@ -11,17 +11,17 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.channel.android.R
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.auth.LoginScreen
-import com.channel.android.ui.viewmodel.LoginViewModel
+import com.channel.android.ui.viewmodel.MainLandingViewModel
+import com.channel.data.session.AuthState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class LoginFragment : Fragment() {
+class MainLandingFragment : Fragment() {
 
     private var _binding: FragmentComposeLayoutBinding? = null
     private val binding get() = _binding!!
-    private val loginViewModel: LoginViewModel by viewModels()
+    private val mainLandingViewModel: MainLandingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,30 +34,22 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launchWhenStarted {
-            loginViewModel.loginState.collectLatest { state ->
-                binding.composeView.setContent {
-                    LoginScreen(
-                        onNavigateToSignUp = {
-                            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
-                        },
-                        loginState = state,
-                        onLogin = { username, password ->
-                            loginViewModel.login(username, password)
-                        },
-                        onLoginSuccess = {
-                            switchToHomeGraph()
-                            switchToHomeGraph()
-                        }
-                    )
+            mainLandingViewModel.authState.collectLatest { authState ->
+                when (authState) {
+                    AuthState.AUTHENTICATED -> switchToAuthGraph()
+                    AuthState.LOGGED_OUT -> findNavController().navigate(R.id.action_mainLandingFragment_to_loginFragment)
+                    AuthState.REFRESHING_TOKEN -> {
+
+                    }
                 }
             }
         }
     }
 
-    private fun switchToHomeGraph() {
+    private fun switchToAuthGraph() {
         val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
-        navController.setGraph(R.navigation.nav_authenticated) // Dynamically switch to Home Graph
+        navController.setGraph(R.navigation.nav_authenticated)
     }
 
     override fun onDestroyView() {

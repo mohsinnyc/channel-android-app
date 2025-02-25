@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.channel.android.databinding.FragmentComposeLayoutBinding
 import com.channel.android.ui.home.HomeScreen
-import com.channel.data.auth.AuthManager
+import com.channel.data.network.AuthManager
 import com.channel.data.session.AuthStateManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

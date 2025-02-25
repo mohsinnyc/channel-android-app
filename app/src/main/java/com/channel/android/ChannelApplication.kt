@@ -2,10 +2,7 @@ package com.channel.android
 
 import android.app.Application
 import android.content.Intent
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.navigation.fragment.NavHostFragment
 import com.channel.data.BuildConfig
-import com.channel.data.auth.AuthManager
 import com.channel.data.session.AuthState.*
 import com.channel.data.session.AuthStateManager
 import dagger.hilt.android.HiltAndroidApp

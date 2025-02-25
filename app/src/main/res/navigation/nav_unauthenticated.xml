@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/loginFragment">
+    android:id="@+id/nav_unauthenticated"
+    app:startDestination="@id/mainLandingFragment">
+
+    <!-- Main Landing Fragment (Decides Auth State) -->
+    <fragment
+        android:id="@+id/mainLandingFragment"
+        android:name="com.channel.android.ui.MainLandingFragment"
+        android:label="Main Landing">
+        <action
+            android:id="@+id/action_mainLandingFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/mainLandingFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_mainLandingFragment_to_nav_authenticated"
+            app:destination="@id/nav_authenticated"
+            app:popUpTo="@id/mainLandingFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"/>
+    </fragment>
 
     <!-- Login Fragment -->
     <fragment

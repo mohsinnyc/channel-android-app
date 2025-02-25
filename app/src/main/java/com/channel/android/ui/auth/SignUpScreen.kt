@@ -28,7 +28,7 @@ fun SignUpScreen(
     LaunchedEffect(signUpState) {
         when (signUpState) {
             is NetworkResult.Success -> onSignUpSuccess()
-            is NetworkResult.Error -> errorMessage = signUpState.message
+            is NetworkResult.Error -> errorMessage = signUpState.errorMessage
             is NetworkResult.Exception -> errorMessage = signUpState.errorMessage
             else -> Unit
         }

@@ -27,7 +27,7 @@ fun LoginScreen(
     LaunchedEffect(loginState) {
         when (loginState) {
             is NetworkResult.Success -> onLoginSuccess()
-            is NetworkResult.Error -> errorMessage = loginState.message
+            is NetworkResult.Error -> errorMessage = loginState.errorMessage
             is NetworkResult.Exception -> errorMessage = loginState.errorMessage
             else -> Unit
         }

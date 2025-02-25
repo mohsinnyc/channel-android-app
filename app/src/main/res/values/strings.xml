@@ -14,4 +14,9 @@
     <string name="auth_login_title">Login</string>
     <string name="auth_login_button">Log In</string>
     <string name="auth_no_account">Don’t have an account? Sign up</string>
+
+    <!-- Error Strings -->
+    <string name="error_title">Error</string>
+    <string name="error_unknown">An unknown error occurred.</string>
+    <string name="error_ok_button">OK</string>
 </resources>
