@@ -1,4 +1,4 @@
-package com.channel.data.models.auth
+package com.channel.data.model.auth
 
 data class SignUpRequest(
     val username: String,

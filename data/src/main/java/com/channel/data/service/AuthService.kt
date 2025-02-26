@@ -1,10 +1,10 @@
-package com.channel.data.network
+package com.channel.data.service
 
-import com.channel.data.models.auth.AuthResponse
-import com.channel.data.models.auth.LoginRequest
-import com.channel.data.models.auth.RefreshTokenRequest
-import com.channel.data.models.auth.RefreshTokenResponse
-import com.channel.data.models.auth.SignUpRequest
+import com.channel.data.model.auth.AuthResponse
+import com.channel.data.model.auth.LoginRequest
+import com.channel.data.model.auth.RefreshTokenRequest
+import com.channel.data.model.auth.RefreshTokenResponse
+import com.channel.data.model.auth.SignUpRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -1,7 +1,5 @@
 package com.channel.data.network
 
-import com.channel.data.auth.AuthManager
-import com.channel.data.storage.TokenManager
 import com.channel.data.utils.NetworkResult
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator

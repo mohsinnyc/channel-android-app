@@ -1,9 +1,9 @@
-package com.channel.android.ui.viewmodel
+package com.channel.android.ui.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.channel.data.auth.AuthManager
-import com.channel.data.models.auth.AuthResponse
+import com.channel.data.network.AuthManager
+import com.channel.data.model.auth.AuthResponse
 import com.channel.data.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ class SignUpViewModel @Inject constructor(
             }
             is NetworkResult.Error -> {
                 _signUpState.value = result
-                Timber.e("Sign-up error: ${result.message}")
+                Timber.e("Sign-up error: ${result.errorMessage}")
             }
             is NetworkResult.Exception -> {
                 _signUpState.value = result
