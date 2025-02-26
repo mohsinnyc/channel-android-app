@@ -70,11 +70,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(project(":data"))
+    implementation(project(":core:ui"))
     implementation(libs.timber)
     implementation(libs.accompanist.swiperefresh)
-
-
-
+    implementation(libs.coil.compose)
 }
 
 kotlin {
