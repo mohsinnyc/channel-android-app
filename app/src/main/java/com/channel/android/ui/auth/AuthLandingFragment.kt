@@ -1,4 +1,4 @@
-package com.channel.android.ui
+package com.channel.android.ui.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.channel.android.R
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.auth.AuthLandingScreen
-import com.channel.android.ui.viewmodel.AuthViewModel
+import com.channel.android.ui.auth.viewmodel.AuthLandingViewModel
 import com.channel.data.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AuthLandingFragment : Fragment() {
     private var _binding: FragmentComposeLayoutBinding? = null
     private val binding get() = _binding!!
-    private val authViewModel: AuthViewModel by viewModels()
+    private val authViewModel: AuthLandingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,12 +35,12 @@ class AuthLandingFragment : Fragment() {
 
     private fun setComposeContent() {
         binding.composeView.setContent {
-            val authState =
+            val onboardingState =
                 authViewModel.onboardingStatus.collectAsState(initial = NetworkResult.Idle)
             AuthLandingScreen(
-                onboardingStatus = authState.value,
-                onNavigateToOnboarding = { state ->
-                    //handle onboarding flow
+                onboardingStatus = onboardingState.value,
+                onNavigateToOnboarding = {
+                    setOnboardingNavGraph()
                 },
                 onNavigateToMainApp = {
                     //handle onboarded flow
@@ -49,6 +50,10 @@ class AuthLandingFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private fun setOnboardingNavGraph() {
+        findNavController().setGraph(R.navigation.nav_onboarding)
     }
 
     override fun onDestroyView() {

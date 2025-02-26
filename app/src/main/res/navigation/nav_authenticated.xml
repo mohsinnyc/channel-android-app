@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/authLandingFragment"
-        android:name="com.channel.android.ui.AuthLandingFragment"
+        android:name="com.channel.android.ui.auth.AuthLandingFragment"
         android:label="Auth Landing">
     </fragment>
 

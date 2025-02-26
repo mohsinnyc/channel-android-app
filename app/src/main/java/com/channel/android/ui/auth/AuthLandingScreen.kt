@@ -18,7 +18,7 @@ import com.channel.data.utils.NetworkResult
 @Composable
 fun AuthLandingScreen(
     onboardingStatus: NetworkResult<OnboardingStatusResponse>,
-    onNavigateToOnboarding: (OnBoardingState) -> Unit,
+    onNavigateToOnboarding:() -> Unit,
     onNavigateToMainApp: () -> Unit,
     onRefresh: () -> Unit
 ) {
@@ -41,7 +41,7 @@ fun AuthLandingScreen(
                         if (onboardingStatus.data.onboardingState == OnBoardingState.ON_BOARDING_COMPLETE) {
                             onNavigateToMainApp()
                         } else {
-                            onNavigateToOnboarding(onboardingStatus.data.onboardingState)
+                            onNavigateToOnboarding()
                         }
                     }
                 }
@@ -68,16 +68,5 @@ fun ErrorMessageDialog(message: String?, onRetry: () -> Unit) {
                 Text(stringResource(id = R.string.error_ok_button))
             }
         }
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewOnboardingStatusScreen() {
-    AuthLandingScreen(
-        onboardingStatus = NetworkResult.Loading,
-        onNavigateToOnboarding = {},
-        onNavigateToMainApp = {},
-        onRefresh = {}
     )
 }

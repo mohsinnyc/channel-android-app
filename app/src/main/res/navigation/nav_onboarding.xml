@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_onboarding"
+    app:startDestination="@id/onboardingLandingFragment">
+
+    <fragment
+        android:id="@+id/onboardingLandingFragment"
+        android:name="com.channel.android.ui.onboarding.OnboardingLandingFragment"
+        android:label="Onboarding Landing">
+        <action
+            android:id="@+id/action_onboardingLanding_to_profileImage"
+            app:destination="@id/profileImageFragment"
+            app:popUpTo="@id/onboardingLandingFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_onboardingLanding_to_profileBio"
+            app:destination="@id/profileBioFragment"
+            app:popUpTo="@id/onboardingLandingFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_onboardingLanding_to_profileAudio"
+            app:destination="@id/profileAudioFragment"
+            app:popUpTo="@id/onboardingLandingFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <!-- Profile Image Fragment -->
+    <fragment
+        android:id="@+id/profileImageFragment"
+        android:name="com.channel.android.ui.onboarding.ProfileImageFragment"
+        android:label="Profile Image">
+        <action
+            android:id="@+id/action_profileImage_to_profileBio"
+            app:destination="@id/profileBioFragment"
+            app:popUpTo="@id/profileImageFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
+    <!-- Profile Bio Fragment -->
+    <fragment
+        android:id="@+id/profileBioFragment"
+        android:name="com.channel.android.ui.onboarding.ProfileBioFragment"
+        android:label="Profile Bio">
+        <action
+            android:id="@+id/action_profileBio_to_profileAudio"
+            app:destination="@id/profileAudioFragment"
+            app:popUpTo="@id/profileBioFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
+    <!-- Profile Audio Fragment -->
+    <fragment
+        android:id="@+id/profileAudioFragment"
+        android:name="com.channel.android.ui.onboarding.ProfileAudioFragment"
+        android:label="Profile Audio"/>
+</navigation>

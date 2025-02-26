@@ -1,4 +1,4 @@
-package com.channel.android.ui
+package com.channel.android.ui.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.channel.android.R
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.auth.SignUpScreen
-import com.channel.android.ui.viewmodel.SignUpViewModel
+import com.channel.android.ui.auth.viewmodel.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 

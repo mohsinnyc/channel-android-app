@@ -1,4 +1,4 @@
-package com.channel.android.ui.viewmodel
+package com.channel.android.ui.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.channel.android.ui
+package com.channel.android.ui.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,8 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.channel.android.R
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.auth.LoginScreen
-import com.channel.android.ui.viewmodel.LoginViewModel
+import com.channel.android.ui.auth.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 

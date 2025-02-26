@@ -32,7 +32,6 @@ class MainLandingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         lifecycleScope.launchWhenStarted {
             mainLandingViewModel.authState.collectLatest { authState ->
                 when (authState) {

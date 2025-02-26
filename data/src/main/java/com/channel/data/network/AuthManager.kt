@@ -4,14 +4,15 @@ import com.channel.data.model.auth.AuthResponse
 import com.channel.data.model.auth.LoginRequest
 import com.channel.data.model.auth.SignUpRequest
 import com.channel.data.model.auth.RefreshTokenRequest
-import com.channel.data.service.AuthService
+import com.channel.data.repository.AuthRepository
 import com.channel.data.session.AuthStateManager
 import com.channel.data.storage.TokenManager
 import com.channel.data.utils.NetworkResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,49 +20,44 @@ import javax.inject.Singleton
 class AuthManager @Inject constructor(
     private val tokenManager: TokenManager,
     private val authStateManager: AuthStateManager,
-    retrofit: Retrofit
+    private val authRepository: AuthRepository
 ) {
-    private val authService: AuthService = retrofit.create(AuthService::class.java)
+
+    init {
+        GlobalScope.launch(Dispatchers.IO) {
+            val token = tokenManager.getToken()
+            if (!token.isNullOrEmpty()) {
+                authStateManager.setAuthenticated()
+            } else {
+                authStateManager.setLoggedOut()
+            }
+        }
+    }
 
     suspend fun login(username: String, password: String): NetworkResult<AuthResponse> {
         return withContext(Dispatchers.IO) {
-            try {
-                val response = authService.login(LoginRequest(username, password))
-                if (response.isSuccessful) {
-                    response.body()?.let { authResponse ->
-                        saveAuthTokens(authResponse)
-                        authStateManager.setAuthenticated()
-                        return@withContext NetworkResult.Success(authResponse)
-                    }
-                    return@withContext NetworkResult.Error(500, "Unexpected response format")
-                }
-                NetworkResult.Error(response.code(), response.errorBody()?.string())
-            } catch (e: Exception) {
-                NetworkResult.Exception(e, "Login request failed")
+            val result = authRepository.login(LoginRequest(username, password))
+            if (result is NetworkResult.Success) {
+                saveAuthTokens(result.data)
+                authStateManager.setAuthenticated()
             }
+            result
         }
     }
 
     suspend fun signUp(username: String, password: String, confirmPassword: String): NetworkResult<AuthResponse> {
         return withContext(Dispatchers.IO) {
-            try {
-                val response = authService.signUp(SignUpRequest(username, password, confirmPassword))
-                if (response.isSuccessful) {
-                    response.body()?.let { authResponse ->
-                        saveAuthTokens(authResponse)
-                        authStateManager.setAuthenticated()
-                        return@withContext NetworkResult.Success(authResponse)
-                    }
-                    return@withContext NetworkResult.Error(500, "Unexpected response format")
-                }
-                NetworkResult.Error(response.code(), response.errorBody()?.string())
-            } catch (e: Exception) {
-                NetworkResult.Exception(e, "Signup request failed")
+            val result = authRepository.signUp(SignUpRequest(username, password, confirmPassword))
+            if (result is NetworkResult.Success) {
+                saveAuthTokens(result.data)
+                authStateManager.setAuthenticated()
             }
+            result
         }
     }
 
     suspend fun refreshAccessToken(): NetworkResult<String> {
+        authStateManager.setRefreshingToken()
         return withContext(Dispatchers.IO) {
             val refreshToken = tokenManager.getRefreshToken() ?: run {
                 authStateManager.setLoggedOut()
@@ -69,39 +65,22 @@ class AuthManager @Inject constructor(
             }
 
             repeat(MAX_REFRESH_RETRIES) { attempt ->
-                try {
-                    authStateManager.setRefreshingToken()
-                    val response = authService.refreshToken(RefreshTokenRequest(refreshToken))
-                    if (response.isSuccessful) {
-                        response.body()?.let { refreshResponse ->
-                            val newAccessToken = refreshResponse.accessToken ?: return@let authStateManager.setLoggedOut()
-                            val newRefreshToken = refreshResponse.refreshToken ?: refreshToken
-
-                            tokenManager.saveToken(newAccessToken)
-                            tokenManager.saveRefreshToken(newRefreshToken)
-
-                            authStateManager.completeTokenRefresh(success = true)
-                            return@withContext NetworkResult.Success(newAccessToken) // ✅ Return token directly
-                        }
-                    } else {
-                        if (attempt == MAX_REFRESH_RETRIES - 1) {
-                            authStateManager.setLoggedOut()
-                            return@withContext NetworkResult.Error(response.code(), "Token refresh failed")
-                        }
-                        delay(REFRESH_RETRY_DELAY)
-                    }
-                } catch (e: Exception) {
-                    if (attempt == MAX_REFRESH_RETRIES - 1) {
-                        authStateManager.setLoggedOut()
-                        return@withContext NetworkResult.Exception(e, "Token refresh request failed")
-                    }
-                    delay(REFRESH_RETRY_DELAY)
+                val result = authRepository.refreshToken(RefreshTokenRequest(refreshToken))
+                if (result is NetworkResult.Success) {
+                    val newAccessToken = result.data.accessToken
+                    tokenManager.saveToken(newAccessToken)
+                    tokenManager.saveRefreshToken(result.data.refreshToken)
+                    authStateManager.setAuthenticated()
+                    return@withContext NetworkResult.Success(newAccessToken)
+                } else if (attempt == MAX_REFRESH_RETRIES - 1) {
+                    authStateManager.setLoggedOut()
+                    return@withContext NetworkResult.Error(401, "Max Refreshes Attempted")
                 }
+                delay(REFRESH_RETRY_DELAY)
             }
             NetworkResult.Error(500, "Unexpected token refresh failure")
         }
     }
-
 
     suspend fun logout(): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
@@ -121,7 +100,7 @@ class AuthManager @Inject constructor(
     }
 
     companion object {
-        private const val MAX_REFRESH_RETRIES = 2 // ✅ Prevents infinite retry loops
-        private const val REFRESH_RETRY_DELAY = 2000L // ✅ Wait 2 seconds before retrying
+        private const val MAX_REFRESH_RETRIES = 2
+        private const val REFRESH_RETRY_DELAY = 2000L
     }
 }

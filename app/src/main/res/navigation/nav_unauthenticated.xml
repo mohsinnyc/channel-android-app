@@ -25,7 +25,7 @@
     <!-- Login Fragment -->
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.channel.android.ui.LoginFragment"
+        android:name="com.channel.android.ui.auth.LoginFragment"
         android:label="Login">
         <action
             android:id="@+id/action_loginFragment_to_signUpFragment"
@@ -37,7 +37,7 @@
     <!-- Sign Up Fragment -->
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.channel.android.ui.SignUpFragment"
+        android:name="com.channel.android.ui.auth.SignUpFragment"
         android:label="Sign Up">
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"
