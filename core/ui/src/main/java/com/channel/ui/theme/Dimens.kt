@@ -35,23 +35,24 @@ object Dimens {
     val iconLarge = 32.dp
     val iconExtraLarge = 48.dp
 
-    // **Text Sizes (if needed)**
+    // **Text Sizes**
     val textSmall = 12.dp
     val textMedium = 16.dp
     val textLarge = 20.dp
 
     // **Image & Avatar Sizes**
-    val profileImageSize = 120.dp
+    val profileImageSize = 160.dp
     val avatarSizeSmall = 40.dp
     val avatarSizeMedium = 64.dp
     val avatarSizeLarge = 80.dp
     val placeholderIconSize = 48.dp
 
-    // **Card & Component Sizing**
+    // **Component Sizing**
     val cardCornerRadius = 16.dp
     val cardElevation = 6.dp
-
-    // **Dividers & Borders**
     val dividerThickness = 1.dp
     val borderStrokeWidth = 2.dp
+
+    // **Positioning & Offsets**
+    val floatingButtonOffset = 20.dp // ✅ Used for placing floating buttons (e.g., camera button)
 }

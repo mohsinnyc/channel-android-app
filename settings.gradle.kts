@@ -23,3 +23,4 @@ rootProject.name = "Channel"
 include(":app")
 include(":data")
 include(":core:ui")
+include(":core:utils")

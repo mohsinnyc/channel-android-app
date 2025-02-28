@@ -19,11 +19,15 @@
     <string name="error_unknown">An unknown error occurred.</string>
     <string name="error_ok_button">OK</string>
 
+    <!-- Onboarding Steps -->
+    <string name="onboarding_step">Step %1$d of %2$d</string>
+    <string name="profile_image_title">Select Your Profile Picture</string>
+    <string name="profile_image_subtext">You can always change this later in settings.</string>
+
     <!-- Profile Image Screen -->
     <string name="profile_image_description">Selected Profile Image</string>
     <string name="profile_image_placeholder">Profile Placeholder</string>
     <string name="profile_image_camera">Camera</string>
-    <string name="profile_image_gallery">Gallery</string>
     <string name="profile_image_submit">Submit</string>
     <string name="profile_image_uploading">Uploading...</string>
     <string name="profile_image_upload_success">Upload successful!</string>

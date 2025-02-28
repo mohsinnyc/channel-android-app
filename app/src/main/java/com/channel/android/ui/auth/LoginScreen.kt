@@ -10,8 +10,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.channel.android.R
 import com.channel.android.ui.theme.ChannelTheme
-import com.channel.android.ui.theme.Dimens
 import com.channel.data.utils.NetworkResult
+import com.channel.ui.theme.Dimens
 
 @Composable
 fun LoginScreen(

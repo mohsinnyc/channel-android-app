@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(project(":data"))
     implementation(project(":core:ui"))
+    implementation(project(":core:utils"))
     implementation(libs.timber)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.coil.compose)

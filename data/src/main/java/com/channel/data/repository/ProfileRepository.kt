@@ -4,6 +4,7 @@ import com.channel.data.service.ProfileService
 import com.channel.data.model.profile.UserProfileResponse
 import com.channel.data.model.profile.OnboardingStatusResponse
 import com.channel.data.utils.NetworkResult
+import okhttp3.MultipartBody
 import retrofit2.Retrofit
 import retrofit2.create
 import javax.inject.Inject
@@ -42,6 +43,19 @@ class ProfileRepository @Inject constructor(
             }
         } catch (e: Throwable) {
             NetworkResult.Exception(e, "Failed to fetch onboarding status")
+        }
+    }
+
+    suspend fun setProfilePicture(image: MultipartBody.Part): NetworkResult<Unit> {
+        return try {
+            val response = profileService.setProfilePicture(image)
+            if (response.isSuccessful) {
+                NetworkResult.Success(Unit) // ✅ Profile picture updated successfully
+            } else {
+                NetworkResult.Error(response.code(), response.message())
+            }
+        } catch (e: Throwable) {
+            NetworkResult.Exception(e, "Failed to upload profile picture")
         }
     }
 }
