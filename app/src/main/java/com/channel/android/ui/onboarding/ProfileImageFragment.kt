@@ -67,8 +67,8 @@ class ProfileImageFragment : Fragment() {
             ProfileImageScreen(
                 uploadState = viewModel.uploadState.collectAsState().value,
                 selectedImageUri = viewModel.selectedImageUri.collectAsState().value,
-                onSelectImage = { requestStoragePermission() },
-                onTakePhoto = { requestCameraPermission() },
+                onPickGallery = { requestStoragePermission() },
+                onPickCamera = { requestCameraPermission() },
                 onSubmit = { viewModel.uploadProfileImage() }
             )
         }

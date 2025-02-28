@@ -3,20 +3,38 @@ package com.channel.android.ui.onboarding
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.channel.data.utils.NetworkResult
 import com.channel.ui.R
+import com.channel.ui.component.MediaPicker
+import com.channel.ui.theme.AppTypography
 import com.channel.ui.theme.Colors
 import com.channel.ui.theme.Dimens
 
@@ -24,105 +42,136 @@ import com.channel.ui.theme.Dimens
 fun ProfileImageScreen(
     uploadState: NetworkResult<Unit>,
     selectedImageUri: Uri?,
-    onSelectImage: () -> Unit,
-    onTakePhoto: () -> Unit,
+    onPickGallery: () -> Unit,
+    onPickCamera: () -> Unit,
     onSubmit: () -> Unit
 ) {
+    var isMediaPickerVisible by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(Dimens.paddingLarge),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start // ✅ Left-align content
     ) {
-        OnboardingHeader()
-
-        ProfileImagePlaceholder(selectedImageUri, onSelectImage)
-
-        Spacer(modifier = Modifier.height(Dimens.paddingMedium))
-
-        MediaPickerButton(onSelectImage)
-
-        Spacer(modifier = Modifier.height(Dimens.paddingLarge))
-
-        SubmitButton(uploadState, selectedImageUri, onSubmit)
-
-        UploadStateMessage(uploadState)
-    }
-}
-
-@Composable
-fun OnboardingHeader() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = stringResource(id = R.string.onboarding_step, 1, 3),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Colors.textSecondary
-        )
+        OnboardingStepIndicator()
         Spacer(modifier = Modifier.height(Dimens.spacingSmall))
-        Text(
-            text = stringResource(id = R.string.profile_image_title),
-            style = MaterialTheme.typography.titleLarge
-        )
+        OnboardingTitle()
         Spacer(modifier = Modifier.height(Dimens.spacingExtraSmall))
-        Text(
-            text = stringResource(id = R.string.profile_image_subtext),
-            style = MaterialTheme.typography.bodySmall,
-            color = Colors.textSecondary
+        OnboardingSubtext()
+        Spacer(modifier = Modifier.height(Dimens.spacingLarge))
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            ProfileImageHolder(
+                selectedImageUri = selectedImageUri,
+                onPickMedia = { isMediaPickerVisible = true }
+            )
+        }
+        Spacer(modifier = Modifier.height(Dimens.spacingExtraLarge))
+        SubmitButton(uploadState = uploadState, onSubmit = onSubmit)
+    }
+
+    if (isMediaPickerVisible) {
+        MediaPickerDialog(
+            onPickGallery = {
+                onPickGallery()
+                isMediaPickerVisible = false
+            },
+            onPickCamera = {
+                onPickCamera()
+                isMediaPickerVisible = false
+            },
+            onDismiss = { isMediaPickerVisible = false }
         )
     }
 }
 
 @Composable
-fun ProfileImagePlaceholder(selectedImageUri: Uri?, onSelectImage: () -> Unit) {
+fun OnboardingStepIndicator() {
+    Text(
+        text = stringResource(id = R.string.onboarding_step, 1, 3),
+        style = AppTypography.bodyMedium,
+        color = Colors.textSecondary,
+        textAlign = TextAlign.Center // ✅ Left-aligned text
+    )
+}
+
+@Composable
+fun OnboardingTitle() {
+    Text(
+        text = stringResource(id = R.string.profile_image_title),
+        style = AppTypography.titleLarge,
+        color = Colors.textPrimary,
+        textAlign = TextAlign.Start // ✅ Left-aligned text
+    )
+}
+
+@Composable
+fun OnboardingSubtext() {
+    Text(
+        text = stringResource(id = R.string.profile_image_subtext),
+        style = AppTypography.bodyMedium,
+        color = Colors.textSecondary,
+        textAlign = TextAlign.Start // ✅ Left-aligned text
+    )
+}
+
+@Composable
+fun ProfileImageHolder(
+    selectedImageUri: Uri?,
+    onPickMedia: () -> Unit
+) {
     Box(
-        modifier = Modifier
-            .size(Dimens.profileImageSize)
-            .clip(CircleShape)
-            .background(Colors.textSecondary)
-            .clickable { onSelectImage() },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(Dimens.profileImageSize)
     ) {
-        if (selectedImageUri != null) {
-            Image(
-                painter = rememberAsyncImagePainter(selectedImageUri),
-                contentDescription = stringResource(id = R.string.profile_image_description),
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
+        Box(
+            modifier = Modifier
+                .size(Dimens.profileImageSize)
+                .clip(CircleShape)
+                .background(Colors.textSecondary),
+            contentAlignment = Alignment.Center
+        ) {
+            if (selectedImageUri != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(selectedImageUri),
+                    contentDescription = stringResource(id = R.string.profile_image_description),
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = stringResource(id = R.string.profile_image_placeholder),
+                    modifier = Modifier.size(Dimens.iconLarge),
+                    tint = Colors.background
+                )
+            }
+        }
+
+        IconButton(
+            onClick = onPickMedia,
+            modifier = Modifier
+                .size(Dimens.iconExtraLarge)
+                .align(Alignment.BottomCenter)
+                .offset(y = Dimens.iconExtraLarge / 2)
+        ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = stringResource(id = R.string.profile_image_placeholder),
-                modifier = Modifier.size(Dimens.iconExtraLarge),
-                tint = Colors.background
+                painter = painterResource(id = R.drawable.ic_camera),
+                contentDescription = stringResource(id = R.string.profile_image_camera),
+                tint = Colors.primary
             )
         }
     }
 }
 
 @Composable
-fun MediaPickerButton(onSelectImage: () -> Unit) {
-    IconButton(
-        onClick = onSelectImage,
-        modifier = Modifier
-            .size(Dimens.iconExtraLarge)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_camera),
-            contentDescription = stringResource(id = R.string.media_picker_camera),
-            tint = Colors.background
-        )
-    }
-}
-
-@Composable
-fun SubmitButton(uploadState: NetworkResult<Unit>, selectedImageUri: Uri?, onSubmit: () -> Unit) {
+fun SubmitButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
     Button(
         onClick = onSubmit,
-        enabled = selectedImageUri != null && uploadState !is NetworkResult.Loading,
+        enabled = uploadState !is NetworkResult.Loading,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.paddingMedium)
+            .padding(Dimens.paddingMedium)
     ) {
         Text(
             text = if (uploadState is NetworkResult.Loading)
@@ -133,31 +182,26 @@ fun SubmitButton(uploadState: NetworkResult<Unit>, selectedImageUri: Uri?, onSub
 }
 
 @Composable
-fun UploadStateMessage(uploadState: NetworkResult<Unit>) {
-    when (uploadState) {
-        is NetworkResult.Error -> {
-            Text(
-                text = stringResource(id = R.string.profile_image_upload_failed, uploadState.errorMessage ?: ""),
-                color = Colors.error
-            )
-        }
-        is NetworkResult.Success -> {
-            Text(stringResource(id = R.string.profile_image_upload_success), color = Colors.primary)
-        }
-        else -> {}
-    }
+fun MediaPickerDialog(
+    onPickGallery: () -> Unit,
+    onPickCamera: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    MediaPicker(
+        onPickGallery = onPickGallery,
+        onPickCamera = onPickCamera,
+        onDismiss = onDismiss
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileImageScreen() {
-    MaterialTheme {
-        ProfileImageScreen(
-            uploadState = NetworkResult.Idle,
-            selectedImageUri = null,
-            onSelectImage = {},
-            onTakePhoto = {},
-            onSubmit = {}
-        )
-    }
+    ProfileImageScreen(
+        uploadState = NetworkResult.Idle,
+        selectedImageUri = null,
+        onPickGallery = {},
+        onPickCamera = {},
+        onSubmit = {}
+    )
 }

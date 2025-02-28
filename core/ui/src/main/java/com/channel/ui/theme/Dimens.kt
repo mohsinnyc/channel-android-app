@@ -52,7 +52,4 @@ object Dimens {
     val cardElevation = 6.dp
     val dividerThickness = 1.dp
     val borderStrokeWidth = 2.dp
-
-    // **Positioning & Offsets**
-    val floatingButtonOffset = 20.dp // ✅ Used for placing floating buttons (e.g., camera button)
 }
