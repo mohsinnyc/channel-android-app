@@ -68,7 +68,7 @@ class OnboardingImageFragment : Fragment() {
                 selectedImageUri = viewModel.selectedImageUri.collectAsState().value,
                 onPickGallery = { requestStoragePermission() },
                 onPickCamera = { requestCameraPermission() },
-                onSubmit = { viewModel.onUploadProfileImage() }
+                onSubmit = { file -> viewModel.uploadProfileImage(file) }
             )
         }
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.channel.data.repository.ProfileRepository
 import com.channel.data.utils.NetworkResult
+import com.channel.utils.UriUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,16 +30,9 @@ class OnboardingImageViewModel @Inject constructor(
         _selectedImageUri.value = uri
     }
 
-    fun onUploadProfileImage() {
-        _selectedImageUri.value?.path?.let { path ->
-            uploadProfileImage(File(path))
-        }
-    }
-
-    private fun uploadProfileImage(imageFile: File) {
+    fun uploadProfileImage(imageFile: File) {
         viewModelScope.launch {
             _uploadState.value = NetworkResult.Loading
-            delay(1000)
             val result = profileRepository.uploadProfileImage(imageFile)
             _uploadState.value = result
         }

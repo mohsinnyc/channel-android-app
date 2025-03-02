@@ -5,7 +5,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.channel.ui.R
@@ -30,31 +29,38 @@ fun MediaPicker(
         ) {
             Text(
                 text = stringResource(id = R.string.media_picker_title),
-                style = AppTypography.titleLarge
+                style = AppTypography.titleLarge,
+                modifier = Modifier.padding(bottom = Dimens.spacingMedium)
             )
-            Spacer(modifier = Modifier.height(Dimens.paddingMedium))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+
+            Button(
+                onClick = {
+                    onPickCamera()
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.spacingSmall)
             ) {
-                IconButton(onClick = onPickCamera) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_camera),
-                        contentDescription = stringResource(id = R.string.media_picker_camera),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                IconButton(onClick = onPickGallery) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_gallery),
-                        contentDescription = stringResource(id = R.string.media_picker_gallery),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Text(text = stringResource(id = R.string.media_picker_camera))
             }
+
+            Button(
+                onClick = {
+                    onPickGallery()
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.spacingSmall)
+            ) {
+                Text(text = stringResource(id = R.string.media_picker_gallery))
+            }
+
             Spacer(modifier = Modifier.height(Dimens.paddingLarge))
-            Button(onClick = onDismiss) {
-                Text(stringResource(id = R.string.media_picker_cancel))
+
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(id = R.string.media_picker_cancel))
             }
         }
     }

@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.androidx.security.crypto) // Latest version
+    implementation(libs.compressor)
 }
 
 

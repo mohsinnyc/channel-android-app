@@ -76,6 +76,7 @@ androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "u
 ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-ui-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+compressor = { module = "id.zelory:compressor", version = "3.0.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

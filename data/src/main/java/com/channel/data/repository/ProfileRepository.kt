@@ -8,11 +8,19 @@ import com.channel.data.service.ProfileService
 import com.channel.data.upload.S3Uploader
 import com.channel.data.utils.NetworkResult
 import com.channel.data.utils.NetworkResult.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import retrofit2.Retrofit
 import retrofit2.create
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Query
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Response
+import retrofit2.http.*
 
 @Singleton
 class ProfileRepository @Inject constructor(
