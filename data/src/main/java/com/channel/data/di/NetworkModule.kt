@@ -4,6 +4,7 @@ import android.content.Context
 import com.channel.data.network.AuthInterceptor
 import com.channel.data.network.TokenAuthenticator
 import com.channel.data.storage.TokenManager
+import com.channel.data.upload.S3Uploader
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

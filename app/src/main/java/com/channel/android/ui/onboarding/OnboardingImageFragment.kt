@@ -10,22 +10,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.onboarding.viewmodel.ProfileImageViewModel
+import com.channel.android.ui.onboarding.viewmodel.OnboardingImageViewModel
 import com.channel.utils.MediaHelper
 import com.channel.utils.PermissionHelper
 import com.channel.utils.PermissionHelper.Permissions
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class ProfileImageFragment : Fragment() {
+class OnboardingImageFragment : Fragment() {
 
     @Inject
     lateinit var mediaHelper: MediaHelper
     private var _binding: FragmentComposeLayoutBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ProfileImageViewModel by viewModels()
+    private val viewModel: OnboardingImageViewModel by viewModels()
     private var imageUri: Uri? = null
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -64,12 +63,12 @@ class ProfileImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.composeView.setContent {
-            ProfileImageScreen(
+            OnboardingImageScreen(
                 uploadState = viewModel.uploadState.collectAsState().value,
                 selectedImageUri = viewModel.selectedImageUri.collectAsState().value,
                 onPickGallery = { requestStoragePermission() },
                 onPickCamera = { requestCameraPermission() },
-                onSubmit = { viewModel.uploadProfileImage() }
+                onSubmit = { viewModel.onUploadProfileImage() }
             )
         }
     }

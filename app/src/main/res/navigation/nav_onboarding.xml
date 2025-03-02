@@ -28,7 +28,7 @@
     <!-- Profile Image Fragment -->
     <fragment
         android:id="@+id/profileImageFragment"
-        android:name="com.channel.android.ui.onboarding.ProfileImageFragment"
+        android:name="com.channel.android.ui.onboarding.OnboardingImageFragment"
         android:label="Profile Image">
         <action
             android:id="@+id/action_profileImage_to_profileBio"

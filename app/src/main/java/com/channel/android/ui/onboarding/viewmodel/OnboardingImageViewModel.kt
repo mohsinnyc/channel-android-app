@@ -6,18 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.channel.data.repository.ProfileRepository
 import com.channel.data.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileImageViewModel @Inject constructor(
+class OnboardingImageViewModel @Inject constructor(
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
@@ -31,16 +29,18 @@ class ProfileImageViewModel @Inject constructor(
         _selectedImageUri.value = uri
     }
 
-    fun uploadProfileImage() {
-        val uri = selectedImageUri.value ?: return
+    fun onUploadProfileImage() {
+        _selectedImageUri.value?.path?.let { path ->
+            uploadProfileImage(File(path))
+        }
+    }
+
+    private fun uploadProfileImage(imageFile: File) {
         viewModelScope.launch {
             _uploadState.value = NetworkResult.Loading
-
-            val imageFile = File(uri.path ?: return@launch)
-            val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-            val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
-
-            _uploadState.value = profileRepository.setProfilePicture(imagePart)
+            delay(1000)
+            val result = profileRepository.uploadProfileImage(imageFile)
+            _uploadState.value = result
         }
     }
 }

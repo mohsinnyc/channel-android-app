@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,7 +41,7 @@ import com.channel.ui.theme.Colors
 import com.channel.ui.theme.Dimens
 
 @Composable
-fun ProfileImageScreen(
+fun OnboardingImageScreen(
     uploadState: NetworkResult<Unit>,
     selectedImageUri: Uri?,
     onPickGallery: () -> Unit,
@@ -48,27 +50,38 @@ fun ProfileImageScreen(
 ) {
     var isMediaPickerVisible by remember { mutableStateOf(false) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(Dimens.paddingLarge),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start // ✅ Left-align content
     ) {
-        OnboardingStepIndicator()
-        Spacer(modifier = Modifier.height(Dimens.spacingSmall))
-        OnboardingTitle()
-        Spacer(modifier = Modifier.height(Dimens.spacingExtraSmall))
-        OnboardingSubtext()
-        Spacer(modifier = Modifier.height(Dimens.spacingLarge))
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Centered step indicator at the top
+            OnboardingStepIndicator(
+                modifier = Modifier
+                    .padding(bottom = Dimens.spacingMedium)
+            )
+
+            OnboardingTitle()
+            Spacer(modifier = Modifier.height(Dimens.spacingSmall))
+            OnboardingSubtext()
+            Spacer(modifier = Modifier.height(Dimens.spacingLarge))
+
             ProfileImageHolder(
                 selectedImageUri = selectedImageUri,
                 onPickMedia = { isMediaPickerVisible = true }
             )
+
+            Spacer(modifier = Modifier.height(Dimens.spacingExtraLarge))
+
+            UploadStateHandler(uploadState)
+
+            SubmitButton(uploadState = uploadState, onSubmit = onSubmit)
         }
-        Spacer(modifier = Modifier.height(Dimens.spacingExtraLarge))
-        SubmitButton(uploadState = uploadState, onSubmit = onSubmit)
     }
 
     if (isMediaPickerVisible) {
@@ -87,12 +100,13 @@ fun ProfileImageScreen(
 }
 
 @Composable
-fun OnboardingStepIndicator() {
+fun OnboardingStepIndicator(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = R.string.onboarding_step, 1, 3),
         style = AppTypography.bodyMedium,
         color = Colors.textSecondary,
-        textAlign = TextAlign.Center // ✅ Left-aligned text
+        textAlign = TextAlign.Center,
+        modifier = modifier.fillMaxWidth()
     )
 }
 
@@ -102,7 +116,7 @@ fun OnboardingTitle() {
         text = stringResource(id = R.string.profile_image_title),
         style = AppTypography.titleLarge,
         color = Colors.textPrimary,
-        textAlign = TextAlign.Start // ✅ Left-aligned text
+        textAlign = TextAlign.Center
     )
 }
 
@@ -112,8 +126,64 @@ fun OnboardingSubtext() {
         text = stringResource(id = R.string.profile_image_subtext),
         style = AppTypography.bodyMedium,
         color = Colors.textSecondary,
-        textAlign = TextAlign.Start // ✅ Left-aligned text
+        textAlign = TextAlign.Center
     )
+}
+
+@Composable
+fun UploadStateHandler(uploadState: NetworkResult<Unit>) {
+    when (uploadState) {
+        is NetworkResult.Loading -> {
+            Text(
+                text = stringResource(id = R.string.profile_image_uploading),
+                style = AppTypography.bodyMedium,
+                color = Colors.textSecondary,
+                textAlign = TextAlign.Center
+            )
+        }
+        is NetworkResult.Success -> {
+            Text(
+                text = stringResource(id = R.string.profile_image_upload_success),
+                style = AppTypography.bodyMedium,
+                color = Colors.textPrimary, // Using textPrimary instead of a missing success color
+                textAlign = TextAlign.Center
+            )
+        }
+        is NetworkResult.Error -> {
+            Text(
+                text = stringResource(id = R.string.profile_image_upload_failed, uploadState.errorMessage ?: "Unknown error"),
+                style = AppTypography.bodyMedium,
+                color = Colors.error,
+                textAlign = TextAlign.Center
+            )
+        }
+        is NetworkResult.Exception -> {
+            Text(
+                text = stringResource(id = R.string.profile_image_upload_failed, uploadState.errorMessage ?: "Unknown error"),
+                style = AppTypography.bodyMedium,
+                color = Colors.error,
+                textAlign = TextAlign.Center
+            )
+        }
+        else -> {} // No UI change for idle state
+    }
+}
+
+@Composable
+fun SubmitButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
+    Button(
+        onClick = onSubmit,
+        enabled = uploadState !is NetworkResult.Loading,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Dimens.paddingMedium)
+    ) {
+        if (uploadState is NetworkResult.Loading) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+        } else {
+            Text(text = stringResource(id = R.string.profile_image_submit))
+        }
+    }
 }
 
 @Composable
@@ -165,23 +235,6 @@ fun ProfileImageHolder(
 }
 
 @Composable
-fun SubmitButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
-    Button(
-        onClick = onSubmit,
-        enabled = uploadState !is NetworkResult.Loading,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(Dimens.paddingMedium)
-    ) {
-        Text(
-            text = if (uploadState is NetworkResult.Loading)
-                stringResource(id = R.string.profile_image_uploading)
-            else stringResource(id = R.string.profile_image_submit)
-        )
-    }
-}
-
-@Composable
 fun MediaPickerDialog(
     onPickGallery: () -> Unit,
     onPickCamera: () -> Unit,
@@ -197,7 +250,7 @@ fun MediaPickerDialog(
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileImageScreen() {
-    ProfileImageScreen(
+    OnboardingImageScreen(
         uploadState = NetworkResult.Idle,
         selectedImageUri = null,
         onPickGallery = {},
