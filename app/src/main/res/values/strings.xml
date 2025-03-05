@@ -24,12 +24,22 @@
     <string name="profile_image_title">Select Your Profile Picture</string>
     <string name="profile_image_subtext">You can always change this later in settings.</string>
 
-    <!-- Profile Image Screen -->
-    <string name="profile_image_description">Selected Profile Image</string>
-    <string name="profile_image_placeholder">Profile Placeholder</string>
+    <!-- Profile Image Strings -->
+    <string name="profile_image_description">Profile image preview</string>
+    <string name="profile_image_placeholder">Default profile image</string>
     <string name="profile_image_camera">Camera</string>
-    <string name="profile_image_submit">Submit</string>
+    <string name="profile_image_save">Save</string>
     <string name="profile_image_uploading">Uploading...</string>
-    <string name="profile_image_upload_success">Upload successful!</string>
     <string name="profile_image_upload_failed">Upload failed: %1$s</string>
+    <string name="profile_image_upload_success">Upload successful!</string>
+
+    <!-- Profile Bio Screen -->
+    <string name="profile_bio_title">Tell us about yourself</string>
+    <string name="profile_bio_subtext">This will appear on your profile.</string>
+    <string name="bio_character_count">%1$d/150 characters</string>
+    <string name="profile_bio_submit">Save</string>
+    <string name="profile_bio_skip">Skip</string>
+    <string name="profile_bio_upload_success">Bio saved successfully!</string>
+    <string name="profile_bio_upload_failed">Failed to save bio: %1$s</string>
+    <string name="profile_bio_hint">Say something about yourself</string>
 </resources>

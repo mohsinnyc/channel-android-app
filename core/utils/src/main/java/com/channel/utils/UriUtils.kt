@@ -4,26 +4,28 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import javax.inject.Inject
 
-object UriUtils {
+class UriUtils @Inject constructor(@ApplicationContext private val context: Context) {
 
-    suspend fun getFileFromUri(context: Context, uri: Uri): File? {
+    suspend fun getFileFromUri(uri: Uri): File? {
         return withContext(Dispatchers.IO) {
             when (uri.scheme) {
                 "file" -> File(uri.path!!)
-                "content" -> copyUriToTempFile(context, uri)
+                "content" -> copyUriToTempFile(uri)
                 else -> null
             }
         }
     }
 
-    private fun copyUriToTempFile(context: Context, uri: Uri): File? {
-        val fileName = getFileName(context, uri) ?: return null
+    private fun copyUriToTempFile(uri: Uri): File? {
+        val fileName = getFileName(uri) ?: return null
         val tempFile = File(context.cacheDir, fileName)
 
         return try {
@@ -39,7 +41,7 @@ object UriUtils {
         }
     }
 
-    private fun getFileName(context: Context, uri: Uri): String? {
+    private fun getFileName(uri: Uri): String? {
         var name: String? = null
         val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
         cursor?.use {

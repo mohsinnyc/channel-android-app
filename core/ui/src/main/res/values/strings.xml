@@ -9,15 +9,6 @@
     <string name="auth_signup_title">Sign Up</string>
     <string name="auth_login_title">Login</string>
 
-    <!-- Profile Image Strings -->
-    <string name="profile_image_description">Profile image preview</string>
-    <string name="profile_image_placeholder">Default profile image</string>
-    <string name="profile_image_camera">Camera</string>
-    <string name="profile_image_submit">Submit</string>
-    <string name="profile_image_uploading">Uploading...</string>
-    <string name="profile_image_upload_failed">Upload failed: %1$s</string>
-    <string name="profile_image_upload_success">Upload successful!</string>
-
     <!-- Onboarding Steps -->
     <string name="onboarding_step">Step %1$d of %2$d</string>
     <string name="profile_image_title">Select Your Profile Picture</string>

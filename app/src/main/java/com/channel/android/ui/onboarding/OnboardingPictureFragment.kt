@@ -9,22 +9,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.channel.android.R
 import com.channel.android.databinding.FragmentComposeLayoutBinding
-import com.channel.android.ui.onboarding.viewmodel.OnboardingImageViewModel
+import com.channel.android.ui.onboarding.viewmodel.OnboardingPictureViewModel
 import com.channel.utils.MediaHelper
 import com.channel.utils.PermissionHelper
-import com.channel.utils.PermissionHelper.Permissions
+import com.channel.utils.PermissionHelper.Companion.Permissions
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class OnboardingImageFragment : Fragment() {
+class OnboardingPictureFragment : Fragment() {
 
     @Inject
     lateinit var mediaHelper: MediaHelper
+
+    @Inject
+    lateinit var permissionHelper: PermissionHelper
     private var _binding: FragmentComposeLayoutBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: OnboardingImageViewModel by viewModels()
+    private val viewModel: OnboardingPictureViewModel by viewModels()
     private var imageUri: Uri? = null
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -63,18 +68,23 @@ class OnboardingImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.composeView.setContent {
-            OnboardingImageScreen(
+            OnboardingPictureScreen(
                 uploadState = viewModel.uploadState.collectAsState().value,
                 selectedImageUri = viewModel.selectedImageUri.collectAsState().value,
                 onPickGallery = { requestStoragePermission() },
                 onPickCamera = { requestCameraPermission() },
-                onSubmit = { file -> viewModel.uploadProfileImage(file) }
+                onSubmit = {
+                    viewModel.onSubmit()
+                },
+                onSuccess = {
+                    findNavController().navigate(R.id.action_profileImage_to_profileBio)
+                }
             )
         }
     }
 
     private fun requestStoragePermission() {
-        if (PermissionHelper.isPermissionGranted(requireContext(), Permissions.STORAGE)) {
+        if (permissionHelper.isPermissionGranted(Permissions.STORAGE)) {
             launchGallery()
         } else {
             storagePermissionLauncher.launch(Permissions.STORAGE)
@@ -86,7 +96,7 @@ class OnboardingImageFragment : Fragment() {
     }
 
     private fun requestCameraPermission() {
-        if (PermissionHelper.isPermissionGranted(requireContext(), Permissions.CAMERA)) {
+        if (permissionHelper.isPermissionGranted(Permissions.CAMERA)) {
             launchCamera()
         } else {
             cameraPermissionLauncher.launch(Permissions.CAMERA)
@@ -94,7 +104,7 @@ class OnboardingImageFragment : Fragment() {
     }
 
     private fun launchCamera() {
-        imageUri = mediaHelper.createImageUri(requireContext())
+        imageUri = mediaHelper.createImageUri()
         cameraLauncher.launch(imageUri)
     }
 

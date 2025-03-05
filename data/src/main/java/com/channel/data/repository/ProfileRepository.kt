@@ -2,25 +2,20 @@ package com.channel.data.repository
 
 import com.channel.data.model.auth.SignedUrlRequest
 import com.channel.data.model.auth.SignedUrlResponse
+import com.channel.data.model.profile.BioRequest
 import com.channel.data.model.profile.OnboardingStatusResponse
 import com.channel.data.model.profile.UserProfileResponse
 import com.channel.data.service.ProfileService
 import com.channel.data.upload.S3Uploader
 import com.channel.data.utils.NetworkResult
-import com.channel.data.utils.NetworkResult.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import com.channel.data.utils.NetworkResult.Error
+import com.channel.data.utils.NetworkResult.Exception
+import com.channel.data.utils.NetworkResult.Success
 import retrofit2.Retrofit
 import retrofit2.create
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Query
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Response
-import retrofit2.http.*
 
 @Singleton
 class ProfileRepository @Inject constructor(
@@ -34,9 +29,7 @@ class ProfileRepository @Inject constructor(
         return try {
             val response = profileService.getProfile()
             if (response.isSuccessful) {
-                response.body()?.let {
-                    Success(it)
-                } ?: Error(response.code(), "Empty Response")
+                response.body()?.let { Success(it) } ?: Error(response.code(), "Empty Response")
             } else {
                 Error(response.code(), response.message())
             }
@@ -50,9 +43,7 @@ class ProfileRepository @Inject constructor(
         return try {
             val response = profileService.getOnboardingStatus()
             if (response.isSuccessful) {
-                response.body()?.let {
-                    Success(it)
-                } ?: Error(response.code(), "Empty Response")
+                response.body()?.let { Success(it) } ?: Error(response.code(), "Empty Response")
             } else {
                 Error(response.code(), response.message())
             }
@@ -62,7 +53,7 @@ class ProfileRepository @Inject constructor(
     }
 
     /** Request a Pre-Signed URL for Image Upload */
-    suspend fun getSignedUrl(file: File): NetworkResult<SignedUrlResponse> {
+    private suspend fun getSignedUrl(file: File): NetworkResult<SignedUrlResponse> {
         return try {
             val response = profileService.getSignedUrl(
                 SignedUrlRequest(file.name, "image/jpeg")
@@ -78,7 +69,7 @@ class ProfileRepository @Inject constructor(
     }
 
     /** Upload Image to S3 */
-    suspend fun uploadImageToS3(signedUrl: String, file: File): NetworkResult<Unit> {
+    private suspend fun uploadImageToS3(signedUrl: String, file: File): NetworkResult<Unit> {
         return s3Uploader.uploadToS3(signedUrl, file)
     }
 
@@ -96,6 +87,7 @@ class ProfileRepository @Inject constructor(
         }
     }
 
+    /** Upload and Update Profile Image */
     suspend fun uploadProfileImage(file: File): NetworkResult<Unit> {
         val signedUrlResult = getSignedUrl(file)
         if (signedUrlResult !is Success) {
@@ -117,6 +109,18 @@ class ProfileRepository @Inject constructor(
         }
         return updateProfileImageUrl(fileUrl)
     }
+
+    /** Upload User Bio */
+    suspend fun updateUserBio(bio: BioRequest): NetworkResult<Unit> {
+        return try {
+            val response = profileService.updateUserBio(bio)
+            if (response.isSuccessful) {
+                Success(Unit)
+            } else {
+                Error(response.code(), "Failed to update bio")
+            }
+        } catch (e: Throwable) {
+            Exception(e, "Exception while updating bio")
+        }
+    }
 }
-
-
