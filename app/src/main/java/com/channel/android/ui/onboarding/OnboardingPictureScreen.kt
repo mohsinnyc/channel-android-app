@@ -3,41 +3,54 @@ package com.channel.android.ui.onboarding
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
+import com.channel.android.R
 import com.channel.data.utils.NetworkResult
-import com.channel.ui.R
+import com.channel.ui.R.*
 import com.channel.ui.component.MediaPicker
 import com.channel.ui.theme.AppTypography
 import com.channel.ui.theme.Colors
 import com.channel.ui.theme.Dimens
-import com.channel.utils.UriUtils
-import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
-fun OnboardingImageScreen(
+fun OnboardingPictureScreen(
     uploadState: NetworkResult<Unit>,
     selectedImageUri: Uri?,
     onPickGallery: () -> Unit,
     onPickCamera: () -> Unit,
-    onSubmit: (File) -> Unit
+    onSubmit: () -> Unit,
+    onSuccess: () -> Unit
 ) {
     var isMediaPickerVisible by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,17 +77,10 @@ fun OnboardingImageScreen(
 
             Spacer(modifier = Modifier.height(Dimens.spacingExtraLarge))
 
-            UploadStateHandler(uploadState)
+            UploadStateHandler(uploadState, onSuccess)
 
-            SubmitButton(uploadState = uploadState) {
-                selectedImageUri?.let { uri ->
-                    coroutineScope.launch {
-                        val imageFile = UriUtils.getFileFromUri(context, uri)
-                        if (imageFile != null && imageFile.exists()) {
-                            onSubmit(imageFile)
-                        }
-                    }
-                }
+            SaveButton(uploadState = uploadState) {
+                onSubmit()
             }
         }
     }
@@ -95,7 +101,7 @@ fun OnboardingImageScreen(
 }
 
 @Composable
-fun OnboardingStepIndicator(modifier: Modifier = Modifier) {
+private fun OnboardingStepIndicator(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = R.string.onboarding_step, 1, 3),
         style = AppTypography.bodyMedium,
@@ -106,7 +112,7 @@ fun OnboardingStepIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OnboardingTitle() {
+private fun OnboardingTitle() {
     Text(
         text = stringResource(id = R.string.profile_image_title),
         style = AppTypography.titleLarge,
@@ -116,7 +122,7 @@ fun OnboardingTitle() {
 }
 
 @Composable
-fun OnboardingSubtext() {
+private fun OnboardingSubtext() {
     Text(
         text = stringResource(id = R.string.profile_image_subtext),
         style = AppTypography.bodyMedium,
@@ -126,7 +132,7 @@ fun OnboardingSubtext() {
 }
 
 @Composable
-fun UploadStateHandler(uploadState: NetworkResult<Unit>) {
+private fun UploadStateHandler(uploadState: NetworkResult<Unit>, onSuccess: () -> Unit) {
     when (uploadState) {
         is NetworkResult.Loading -> {
             Text(
@@ -143,6 +149,7 @@ fun UploadStateHandler(uploadState: NetworkResult<Unit>) {
                 color = Colors.textPrimary,
                 textAlign = TextAlign.Center
             )
+            onSuccess()
         }
         is NetworkResult.Error -> {
             Text(
@@ -165,7 +172,7 @@ fun UploadStateHandler(uploadState: NetworkResult<Unit>) {
 }
 
 @Composable
-fun SubmitButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
+private fun SaveButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
     Button(
         onClick = onSubmit,
         enabled = uploadState !is NetworkResult.Loading,
@@ -176,13 +183,13 @@ fun SubmitButton(uploadState: NetworkResult<Unit>, onSubmit: () -> Unit) {
         if (uploadState is NetworkResult.Loading) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
         } else {
-            Text(text = stringResource(id = R.string.profile_image_submit))
+            Text(text = stringResource(id = R.string.profile_image_save))
         }
     }
 }
 
 @Composable
-fun ProfileImageHolder(
+private fun ProfileImageHolder(
     selectedImageUri: Uri?,
     onPickMedia: () -> Unit
 ) {
@@ -221,7 +228,7 @@ fun ProfileImageHolder(
                 .offset(y = Dimens.iconExtraLarge / 2)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_camera),
+                painter = painterResource(id = drawable.ic_camera),
                 contentDescription = stringResource(id = R.string.profile_image_camera),
                 tint = Colors.primary
             )
@@ -230,7 +237,7 @@ fun ProfileImageHolder(
 }
 
 @Composable
-fun MediaPickerDialog(
+private fun MediaPickerDialog(
     onPickGallery: () -> Unit,
     onPickCamera: () -> Unit,
     onDismiss: () -> Unit
@@ -244,12 +251,13 @@ fun MediaPickerDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewProfileImageScreen() {
-    OnboardingImageScreen(
+private fun PreviewProfileImageScreen() {
+    OnboardingPictureScreen(
         uploadState = NetworkResult.Idle,
         selectedImageUri = null,
         onPickGallery = {},
         onPickCamera = {},
-        onSubmit = {}
+        onSubmit = {},
+        onSuccess = {}
     )
 }

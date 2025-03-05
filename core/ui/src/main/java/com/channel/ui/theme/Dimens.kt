@@ -52,4 +52,7 @@ object Dimens {
     val cardElevation = 6.dp
     val dividerThickness = 1.dp
     val borderStrokeWidth = 2.dp
+
+    // **TextField Sizing**
+    val bioTextFieldHeight = 100.dp
 }

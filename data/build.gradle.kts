@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -60,7 +59,6 @@ dependencies {
 
     // Gson
     implementation(libs.gson)
-
     implementation(libs.androidx.security.crypto) // Latest version
     implementation(libs.compressor)
 }

@@ -28,7 +28,7 @@
     <!-- Profile Image Fragment -->
     <fragment
         android:id="@+id/profileImageFragment"
-        android:name="com.channel.android.ui.onboarding.OnboardingImageFragment"
+        android:name="com.channel.android.ui.onboarding.OnboardingPictureFragment"
         android:label="Profile Image">
         <action
             android:id="@+id/action_profileImage_to_profileBio"
@@ -40,7 +40,7 @@
     <!-- Profile Bio Fragment -->
     <fragment
         android:id="@+id/profileBioFragment"
-        android:name="com.channel.android.ui.onboarding.ProfileBioFragment"
+        android:name="com.channel.android.ui.onboarding.OnboardingBioFragment"
         android:label="Profile Bio">
         <action
             android:id="@+id/action_profileBio_to_profileAudio"
